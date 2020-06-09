@@ -133,6 +133,15 @@ shinyServer(function(input, output) {
             theme(strip.text.x = element_text(size = 14))
     })
     
+    output$image <- renderImage({
+        image_name = paste(input$book_title,".jpg", sep = "")
+        list(src = image_name,
+             contentType = "image/jpg",
+             width = 300,
+             height = 400,
+             alt = input$book_title)
+    }, deleteFile = FALSE)
+    
     output$word_count <- renderPlot({
         bing_word_counts <- series[series$book==input$book_title,] %>%
             {if(input$stop_words) anti_join(., stop_words) else .}%>%
