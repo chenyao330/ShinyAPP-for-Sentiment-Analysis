@@ -227,6 +227,7 @@ shinyUI(dashboardPage(
                            selectInput("book_title","Please select a book",choices = titles, 
                                        selected = "Philosopher's Stone",
                                        width = 400),
+                           imageOutput("image"),
                            checkboxInput("stop_words", label = "Delete stop-words", value = TRUE),
                            p("A stop word is a commonly used word (such as 'the', 'a', 'an', 'in') 
                            that some times need to be ignored. Here I used the stop-words list in the 
