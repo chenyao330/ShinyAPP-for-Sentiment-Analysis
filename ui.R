@@ -224,45 +224,50 @@ shinyUI(dashboardPage(
                      ),
                      fluidRow(
                          box(width = 12,
-                           selectInput("book_title","Please select a book",choices = titles, 
-                                       selected = "Philosopher's Stone",
-                                       width = 400),
-                           imageOutput("image"),
-                           checkboxInput("stop_words", label = "Delete stop-words", value = TRUE),
-                           p("A stop word is a commonly used word (such as 'the', 'a', 'an', 'in') 
-                           that some times need to be ignored. Here I used the stop-words list in the 
-                           package. "
-                             ,style = "font-family: 'calibri';font-size:14pt"),
-                           tabsetPanel(
-                             tabPanel("Word Count",
-                                      plotOutput("word_count"),
-                                      p("This two graphs show the most positive words and negative 
-                                      words in the chosen novel. For example, in Philosopher's Stone,
-                                      the leading two negative word is dark and fell, if we have read 
-                                      the novel or see the movie, we can assume that they may be used 
-                                      most in describing the tiny room where Harry Potter found the 
-                                      magic stone."
-                                        ,style = "font-family: 'calibri';font-size:14pt")
-                             ),
-                             tabPanel("Word cloud",
-                                      plotOutput("word_cloud"),
-                                      p("This wordcloud shows integrate the words most used in the 
-                                      novel, in which red represent the positive words while blue 
-                                      represent the negative words."
-                                        ,style = "font-family: 'calibri';font-size:14pt")
-                             ),
-                             tabPanel("Plot Development",
-                                      plotOutput("plot_development"),
-                                      p("This sentiment thermal map through each chapter indicates how
-                                      the sentiment changes during the process of plot development. 
-                                      Notice, this algorithem is different from the one in 'Explore 
-                                      More' part. This map used the word sentiment analysis to   
-                                      calculate the sentiment score of a sentence."
-                                        ,style = "font-family: 'calibri';font-size:14pt")
-                             )
-                           )
-                         ) 
-                           
+                             column(3,
+                                    radioButtons("book_title","Please select a book",choices = titles, 
+                                          selected = "Philosopher's Stone"
+                                          )
+                                    ),
+                             column(3,
+                                    imageOutput("image")
+                                    )
+                         ),
+                         box(width = 12,
+                             checkboxInput("stop_words", label = "Delete stop-words", value = TRUE),
+                             p("A stop word is a commonly used word (such as 'the', 'a', 'an', 'in') 
+                                that some times need to be ignored. Here I used the stop-words list in the 
+                                package. "
+                               ,style = "font-family: 'calibri';font-size:14pt"),
+                             tabsetPanel(
+                               tabPanel("Word Count",
+                                        plotOutput("word_count"),
+                                        p("This two graphs show the most positive words and negative 
+                                           words in the chosen novel. For example, in Philosopher's Stone,
+                                           the leading two negative word is dark and fell, if we have read 
+                                           the novel or see the movie, we can assume that they may be used 
+                                           most in describing the tiny room where Harry Potter found the 
+                                           magic stone."
+                                          ,style = "font-family: 'calibri';font-size:14pt")
+                               ),
+                               tabPanel("Word cloud",
+                                        plotOutput("word_cloud"),
+                                        p("This wordcloud shows integrate the words most used in the 
+                                           novel, in which red represent the positive words while blue 
+                                           represent the negative words."
+                                          ,style = "font-family: 'calibri';font-size:14pt")
+                               ),
+                               tabPanel("Plot Development",
+                                        plotOutput("plot_development"),
+                                        p("This sentiment thermal map through each chapter indicates how
+                                           the sentiment changes during the process of plot development. 
+                                           Notice, this algorithem is different from the one in 'Explore 
+                                           More' part. This map used the word sentiment analysis to   
+                                           calculate the sentiment score of a sentence."
+                                          ,style = "font-family: 'calibri';font-size:14pt")
+                               )
+                         )
+                       )
                      )
            ),
            tabItem(tabName = "more",
