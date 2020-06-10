@@ -5,7 +5,7 @@ titles <- c("Philosopher's Stone", "Chamber of Secrets", "Prisoner of Azkaban",
             "Goblet of Fire", "Order of the Phoenix", "Half-Blood Prince",
             "Deathly Hallows")
 
-# Define UI for application that draws a histogram
+#The main part of shinyUI
 shinyUI(dashboardPage(
     skin = "blue",
     dashboardHeader(title ="Text Sentiment Analysis - Assignment 2, Yao Chen",
@@ -76,8 +76,7 @@ shinyUI(dashboardPage(
                     p("Basically, we can use sentiment analysis to track the sentiment plot in one of
                       our favourite novels or songs."
                       ,style = "font-family: 'calibri';font-size:18pt")
-                  )
-                  
+                  )                  
               ),
               fluidRow(
                   box(width = 8,
@@ -311,7 +310,7 @@ shinyUI(dashboardPage(
                      )
                    )
            ),
-           # references
+           #references
            tabItem(tabName = "references",
                    h2("Thanks to these references"),
                    br(),
