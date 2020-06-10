@@ -1,3 +1,4 @@
+## import libraries
 library(shiny)
 library(wordcloud)
 library(devtools)
@@ -12,19 +13,22 @@ library(textdata)
 library(knitr)
 library(kableExtra)
 library(sentimentr)
+
+#Install packages that contained harrypotter series
 if (packageVersion("devtools") < 1.6) {
     install.packages("devtools")
 }
 devtools::install_github("bradleyboehmke/harrypotter")
 library(harrypotter)
 
-##definite my own table style
+#Define the displayed table style
 my_kable_styling <- function(dat, caption) {
     kable(dat, "html", escape = FALSE, caption = caption) %>%
         kable_styling(bootstrap_options = c("striped", "condensed", "bordered"),
                       full_width = FALSE, position = "left")
 }
 
+#Define the variables 
 books <- list(philosophers_stone, chamber_of_secrets, prisoner_of_azkaban,
               goblet_of_fire, order_of_the_phoenix, half_blood_prince,
               deathly_hallows)
@@ -33,29 +37,29 @@ titles <- c("Philosopher's Stone", "Chamber of Secrets", "Prisoner of Azkaban",
             "Goblet of Fire", "Order of the Phoenix", "Half-Blood Prince",
             "Deathly Hallows")
 
-##Each book is an array in which each value in the array is a chapter 
+#Each book is an array in which each value in the array is a chapter
+#Form a tibble that combines all the books and chapters and tokenize into words
 series <- tibble()
 for(i in seq_along(titles)) {
-    ##divide the books into chapter
     clean <- tibble(chapter = seq_along(books[[i]]),
                     text = books[[i]]) %>%
              unnest_tokens(word, text) %>%
-             ##Here we tokenize each chapter into words
+             #tokenize each chapter into words
              mutate(book = titles[i]) %>%
-             select(book, everything())
-    
+             select(book, everything())    
     series <- rbind(series, clean)
 }
-# set factor to keep books in order of publication
+
+#Set factor to keep books in order of publication
 series$book <- factor(series$book, levels = rev(titles))
 
-
-# Define server logic required to draw a histogram
+#The main part of shinyServer
 shinyServer(function(input, output) {
     
+    #Output brief information by lexicons
     output$afinn <- renderPrint({
         get_sentiments("afinn")
-    })
+    })  
     
     output$bing <- renderPrint({
         get_sentiments("bing")
@@ -65,8 +69,9 @@ shinyServer(function(input, output) {
         get_sentiments("nrc")
     })
     
+    #match the words in hp and lexicons to see if 
     output$lexicon_hp <- function(){
-        new_sentiments <- bind_rows(get_sentiments("afinn") %>% #From the tidytext package
+        new_sentiments <- bind_rows(get_sentiments("afinn") %>%
                                         mutate(sentiment = ifelse(value >= 0, "positive",
                                                                   ifelse(value < 0,
                                                                          "negative", "neutral"))) %>%
@@ -76,7 +81,7 @@ shinyServer(function(input, output) {
                                         mutate(lexicon = "Bing"),
                                     get_sentiments("nrc")%>%
                                         mutate(lexicon = "NRC")
-        )%>%
+                                    )%>%
             group_by(lexicon) %>%
             mutate(words_in_lexicon = n_distinct(word)) %>%
             ungroup()
@@ -93,6 +98,7 @@ shinyServer(function(input, output) {
             my_kable_styling(caption = "HP Word Found In Lexicons")
     }
     
+    # illustrate the difference between words sentiment analysis by lexicons
     output$lexicon_diff <- renderPlot({
         afinn <- series %>%
             group_by(book) %>% 
@@ -122,7 +128,7 @@ shinyServer(function(input, output) {
             mutate(sentiment = positive - negative) %>%
             select(book, index, method, sentiment)
         
-        #now have an estimate of the net sentiment (positive - negative) in each chunk of the novel text for each sentiment lexicon
+        # have an estimate of the net sentiment (positive - negative) in each chunk of the novel text for each sentiment lexicon
         bind_rows(afinn, 
                   bing_and_nrc) %>%
             ungroup() %>%
@@ -133,6 +139,7 @@ shinyServer(function(input, output) {
             theme(strip.text.x = element_text(size = 14))
     })
     
+    #show the bookcover after choose the target book
     output$image <- renderImage({
         image_name = paste(input$book_title,".jpg", sep = "")
         list(src = image_name,
@@ -142,6 +149,7 @@ shinyServer(function(input, output) {
              alt = input$book_title)
     }, deleteFile = FALSE)
     
+    #output the basic analysis part
     output$word_count <- renderPlot({
         bing_word_counts <- series[series$book==input$book_title,] %>%
             {if(input$stop_words) anti_join(., stop_words) else .}%>%
